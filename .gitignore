@@ -1,0 +1,25 @@
+# Build artifacts
+bin/
+obj/
+out/
+
+# Rider / VS / VS Code
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Test artifacts
+TestResults/
+coverage/
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+
+# Tooling
+.nuget/

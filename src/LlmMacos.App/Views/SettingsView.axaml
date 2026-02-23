@@ -1,0 +1,50 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="LlmMacos.App.Views.SettingsView">
+  <Border Classes="card" Margin="6">
+    <Grid RowDefinitions="Auto,*,Auto">
+      <TextBlock Classes="headline" Text="Settings" />
+
+      <Grid Grid.Row="1" ColumnDefinitions="*,*">
+        <StackPanel Spacing="10">
+          <TextBlock FontWeight="SemiBold" Text="Hugging Face Token" />
+          <TextBox Watermark="Optional token for private/gated models"
+                   Text="{Binding HfToken}" />
+
+          <TextBlock FontWeight="SemiBold" Margin="0,8,0,0" Text="Default System Prompt" />
+          <TextBox AcceptsReturn="True"
+                   TextWrapping="Wrap"
+                   MinHeight="140"
+                   Text="{Binding DefaultSystemPrompt}" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Spacing="10">
+          <TextBlock FontWeight="SemiBold" Text="Runtime Defaults" />
+
+          <TextBlock Classes="subtle" Text="Context Size" />
+          <NumericUpDown Minimum="512" Maximum="32768" Increment="512" Value="{Binding ContextSize}" />
+
+          <TextBlock Classes="subtle" Text="GPU Layers" />
+          <NumericUpDown Minimum="0" Maximum="200" Increment="1" Value="{Binding GpuLayerCount}" />
+
+          <TextBlock Classes="subtle" Text="Temperature" />
+          <NumericUpDown Minimum="0" Maximum="2" Increment="0.05" Value="{Binding Temperature}" />
+
+          <TextBlock Classes="subtle" Text="Top P" />
+          <NumericUpDown Minimum="0" Maximum="1" Increment="0.05" Value="{Binding TopP}" />
+
+          <TextBlock Classes="subtle" Text="Max Tokens" />
+          <NumericUpDown Minimum="16" Maximum="4096" Increment="16" Value="{Binding MaxTokens}" />
+
+          <CheckBox IsChecked="{Binding UseMetal}" Content="Use Metal Acceleration" />
+        </StackPanel>
+      </Grid>
+
+      <Grid Grid.Row="2" ColumnDefinitions="Auto,Auto,*">
+        <Button Classes="primary" Content="Save" Command="{Binding SaveCommand}" />
+        <Button Grid.Column="1" Classes="subtle" Content="Clear Token" Command="{Binding ClearTokenCommand}" />
+        <TextBlock Grid.Column="2" VerticalAlignment="Center" Classes="subtle" Text="{Binding StatusMessage}" />
+      </Grid>
+    </Grid>
+  </Border>
+</UserControl>

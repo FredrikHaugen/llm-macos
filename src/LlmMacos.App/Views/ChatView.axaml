@@ -1,0 +1,76 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="LlmMacos.App.Views.ChatView">
+  <Grid Margin="6" RowDefinitions="Auto,*,Auto,Auto">
+    <Border Classes="card">
+      <Grid ColumnDefinitions="2*,Auto,Auto,Auto">
+        <ComboBox ItemsSource="{Binding AvailableModels}"
+                  SelectedItem="{Binding SelectedModel}"
+                  HorizontalAlignment="Stretch"
+                  MinWidth="420">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="{Binding RepoId}" />
+                <TextBlock Classes="subtle" Text="{Binding FileName}" />
+                <Border Background="#EAF8FF" CornerRadius="999" Padding="8,2">
+                  <TextBlock Foreground="#1351E0" FontWeight="SemiBold" Text="{Binding State}" />
+                </Border>
+              </StackPanel>
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Button Grid.Column="1" Classes="primary" Content="Load Model" Command="{Binding LoadSelectedModelCommand}" />
+        <Button Grid.Column="2" Classes="subtle" Content="New Session" Command="{Binding NewSessionCommand}" />
+        <Button Grid.Column="3" Classes="subtle" Content="Refresh Models" Command="{Binding RefreshModelsCommand}" />
+      </Grid>
+    </Border>
+
+    <Border Grid.Row="1" Classes="card">
+      <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <ItemsControl ItemsSource="{Binding Messages}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Grid Margin="0,0,0,10" ColumnDefinitions="Auto,*">
+                <Border Width="78"
+                        CornerRadius="10"
+                        Padding="8,4"
+                        Background="#EAF0FF"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Left">
+                  <TextBlock HorizontalAlignment="Center"
+                             FontWeight="SemiBold"
+                             Foreground="#1E4FE5"
+                             Text="{Binding Role}" />
+                </Border>
+                <Border Grid.Column="1"
+                        Margin="10,0,0,0"
+                        Padding="10"
+                        CornerRadius="10"
+                        Background="#FFFFFFFF"
+                        BorderBrush="#E4EAF7"
+                        BorderThickness="1">
+                  <TextBlock TextWrapping="Wrap" Text="{Binding Content}" />
+                </Border>
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+    </Border>
+
+    <Border Grid.Row="2" Classes="card">
+      <Grid ColumnDefinitions="*,Auto,Auto">
+        <TextBox AcceptsReturn="True"
+                 TextWrapping="Wrap"
+                 MinHeight="84"
+                 Watermark="Type your prompt..."
+                 Text="{Binding InputText}" />
+        <Button Grid.Column="1" Classes="primary" Content="Send" Command="{Binding SendCommand}" />
+        <Button Grid.Column="2" Classes="subtle" Content="Stop" Command="{Binding StopGeneratingCommand}" />
+      </Grid>
+    </Border>
+
+    <TextBlock Grid.Row="3" Classes="subtle" Margin="4,0,0,0" Text="{Binding StatusMessage}" />
+  </Grid>
+</UserControl>

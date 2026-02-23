@@ -1,0 +1,41 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:LlmMacos.App.Views"
+        mc:Ignorable="d" d:DesignWidth="1400" d:DesignHeight="920"
+        x:Class="LlmMacos.App.MainWindow"
+        MinWidth="1080"
+        MinHeight="760"
+        Title="LlmMacos">
+  <Border Background="{StaticResource PageBackground}">
+    <Grid Margin="18" RowDefinitions="Auto,*">
+      <Border Classes="card" Margin="0,0,0,14" Padding="16">
+        <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+          <StackPanel>
+            <TextBlock Classes="headline" Text="LlmMacos" />
+            <TextBlock Classes="subtle" Text="Discover, download and chat with local GGUF models on macOS." />
+          </StackPanel>
+          <Border Background="#DFF9F3" CornerRadius="100" Padding="12,6" HorizontalAlignment="Right">
+            <TextBlock Foreground="#0A8A74" FontWeight="SemiBold" Text="Apple Silicon · Local Runtime" />
+          </Border>
+        </Grid>
+      </Border>
+
+      <TabControl Grid.Row="1">
+        <TabItem Header="Models">
+          <views:ModelExplorerView DataContext="{Binding ModelExplorer}" />
+        </TabItem>
+        <TabItem Header="Downloads">
+          <views:DownloadsView DataContext="{Binding Downloads}" />
+        </TabItem>
+        <TabItem Header="Chat">
+          <views:ChatView DataContext="{Binding Chat}" />
+        </TabItem>
+        <TabItem Header="Settings">
+          <views:SettingsView DataContext="{Binding Settings}" />
+        </TabItem>
+      </TabControl>
+    </Grid>
+  </Border>
+</Window>

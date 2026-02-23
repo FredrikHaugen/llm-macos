@@ -1,0 +1,31 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="LlmMacos.App.Views.DownloadsView">
+  <Border Classes="card" Margin="6">
+    <Grid RowDefinitions="Auto,*,Auto">
+      <TextBlock Classes="headline" Text="Downloads" />
+
+      <ListBox Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Border Margin="0,0,0,8" Padding="12" Background="#FFFFFFFF" CornerRadius="10" BorderBrush="#E6ECF8" BorderThickness="1">
+              <StackPanel Spacing="4">
+                <TextBlock FontWeight="SemiBold" Text="{Binding DownloadId}" />
+                <ProgressBar Minimum="0" Maximum="100" Value="{Binding Percent}" Height="8" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                  <TextBlock Classes="subtle" Text="{Binding Status}" />
+                  <TextBlock Classes="subtle" Text="{Binding Message}" />
+                </StackPanel>
+              </StackPanel>
+            </Border>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+      <Grid Grid.Row="2" ColumnDefinitions="Auto,*">
+        <Button Classes="subtle" Content="Cancel Selected" Command="{Binding CancelSelectedCommand}" />
+        <TextBlock Grid.Column="1" VerticalAlignment="Center" Classes="subtle" Text="{Binding StatusMessage}" />
+      </Grid>
+    </Grid>
+  </Border>
+</UserControl>

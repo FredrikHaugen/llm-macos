@@ -1,0 +1,65 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="LlmMacos.App.Views.ModelExplorerView">
+  <Grid ColumnDefinitions="2*,3*" Margin="6">
+    <Border Classes="card">
+      <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <TextBlock Classes="headline" Text="Model Explorer" />
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+          <TextBox Watermark="Search GGUF models" Text="{Binding SearchText}" />
+          <Button Grid.Column="1" Classes="primary" Content="Search" Command="{Binding SearchCommand}" />
+        </Grid>
+
+        <ListBox Grid.Row="2"
+                 ItemsSource="{Binding Results}"
+                 SelectedItem="{Binding SelectedResult}"
+                 MinHeight="300">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <Border Margin="0,0,0,8" Padding="10" Background="#FFFFFFFF" CornerRadius="10" BorderBrush="#E6ECF8" BorderThickness="1">
+                <StackPanel>
+                  <TextBlock FontWeight="SemiBold" Text="{Binding RepoId}" />
+                  <TextBlock Classes="subtle" Text="{Binding Author}" />
+                  <TextBlock Classes="subtle" Text="{Binding Description}" />
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+
+        <TextBlock Grid.Row="3" Classes="subtle" Text="{Binding StatusMessage}" />
+      </Grid>
+    </Border>
+
+    <Border Grid.Column="1" Classes="card">
+      <Grid RowDefinitions="Auto,Auto,*,Auto">
+        <TextBlock Classes="headline" Text="Selected Model" />
+
+        <StackPanel Grid.Row="1" Spacing="4">
+          <TextBlock FontSize="16" FontWeight="SemiBold" Text="{Binding SelectedResult.RepoId}" />
+          <TextBlock Classes="subtle" Text="Pick a GGUF file and download it to local storage." />
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Spacing="10">
+          <TextBlock FontWeight="SemiBold" Text="Available GGUF Files" />
+          <ComboBox ItemsSource="{Binding SelectedFiles}" SelectedItem="{Binding SelectedFile}" MinWidth="450">
+            <ComboBox.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <TextBlock Text="{Binding Name}" />
+                  <TextBlock Classes="subtle" Text="{Binding Size}" />
+                </StackPanel>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </StackPanel>
+
+        <Grid Grid.Row="3" ColumnDefinitions="Auto,*" VerticalAlignment="Center">
+          <Button Classes="primary" Content="Download" Command="{Binding DownloadSelectedCommand}" />
+          <TextBlock Grid.Column="1" VerticalAlignment="Center" Classes="subtle" Text="{Binding StatusMessage}" />
+        </Grid>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

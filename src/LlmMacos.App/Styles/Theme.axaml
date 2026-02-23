@@ -1,0 +1,80 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Styles.Resources>
+    <Color x:Key="BrandBlue">#2A5FFF</Color>
+    <Color x:Key="BrandTeal">#17BEBB</Color>
+    <Color x:Key="BrandSun">#FDB515</Color>
+    <Color x:Key="TextStrong">#13223B</Color>
+    <Color x:Key="TextMuted">#5D6B87</Color>
+    <Color x:Key="CardBorder">#D6DEEE</Color>
+    <Color x:Key="CardBg">#F8FBFF</Color>
+
+    <SolidColorBrush x:Key="BrushBrandBlue" Color="{StaticResource BrandBlue}" />
+    <SolidColorBrush x:Key="BrushBrandTeal" Color="{StaticResource BrandTeal}" />
+    <SolidColorBrush x:Key="BrushBrandSun" Color="{StaticResource BrandSun}" />
+    <SolidColorBrush x:Key="BrushTextStrong" Color="{StaticResource TextStrong}" />
+    <SolidColorBrush x:Key="BrushTextMuted" Color="{StaticResource TextMuted}" />
+    <SolidColorBrush x:Key="BrushCardBorder" Color="{StaticResource CardBorder}" />
+    <SolidColorBrush x:Key="BrushCardBg" Color="{StaticResource CardBg}" />
+
+    <LinearGradientBrush x:Key="PageBackground" StartPoint="0,0" EndPoint="1,1">
+      <GradientStop Color="#F4F8FF" Offset="0" />
+      <GradientStop Color="#ECFFF7" Offset="0.5" />
+      <GradientStop Color="#FFF7E8" Offset="1" />
+    </LinearGradientBrush>
+  </Styles.Resources>
+
+  <Style Selector="Window">
+    <Setter Property="FontFamily" Value="Avenir Next, SF Pro Display, Helvetica Neue" />
+    <Setter Property="Foreground" Value="{StaticResource BrushTextStrong}" />
+  </Style>
+
+  <Style Selector="TextBlock.headline">
+    <Setter Property="FontSize" Value="20" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Foreground" Value="{StaticResource BrushTextStrong}" />
+  </Style>
+
+  <Style Selector="TextBlock.subtle">
+    <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}" />
+    <Setter Property="FontSize" Value="12" />
+  </Style>
+
+  <Style Selector="Border.card">
+    <Setter Property="Background" Value="{StaticResource BrushCardBg}" />
+    <Setter Property="BorderBrush" Value="{StaticResource BrushCardBorder}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="14" />
+    <Setter Property="Padding" Value="14" />
+    <Setter Property="BoxShadow" Value="0 8 24 0 #18000000" />
+  </Style>
+
+  <Style Selector="Button.primary">
+    <Setter Property="Background" Value="{StaticResource BrushBrandBlue}" />
+    <Setter Property="Foreground" Value="White" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Padding" Value="16,10" />
+    <Setter Property="CornerRadius" Value="12" />
+  </Style>
+
+  <Style Selector="Button.subtle">
+    <Setter Property="Background" Value="#EAF0FF" />
+    <Setter Property="Foreground" Value="{StaticResource BrushBrandBlue}" />
+    <Setter Property="Padding" Value="12,8" />
+    <Setter Property="CornerRadius" Value="12" />
+  </Style>
+
+  <Style Selector="TextBox, ComboBox, NumericUpDown">
+    <Setter Property="CornerRadius" Value="12" />
+    <Setter Property="Padding" Value="10,8" />
+  </Style>
+
+  <Style Selector="TabControl">
+    <Setter Property="Background" Value="Transparent" />
+  </Style>
+
+  <Style Selector="TabItem">
+    <Setter Property="Padding" Value="14,8" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+</Styles>

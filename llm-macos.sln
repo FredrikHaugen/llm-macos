@@ -1,0 +1,45 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34511.84
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LlmMacos.App", "src/LlmMacos.App/LlmMacos.App.csproj", "{9B52F9D8-7E67-470A-95B8-7A6A9D665E96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LlmMacos.Core", "src/LlmMacos.Core/LlmMacos.Core.csproj", "{6D6A7DA7-14AF-4751-B8F7-7B5086D5FE00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LlmMacos.Infrastructure", "src/LlmMacos.Infrastructure/LlmMacos.Infrastructure.csproj", "{37B0B2CA-CF28-4507-8402-EA01EFD38A4C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LlmMacos.Core.Tests", "tests/LlmMacos.Core.Tests/LlmMacos.Core.Tests.csproj", "{7DD9D7A1-C3CD-4225-8D82-EDCCB20409D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LlmMacos.Infrastructure.Tests", "tests/LlmMacos.Infrastructure.Tests/LlmMacos.Infrastructure.Tests.csproj", "{A043CC35-E8E0-4C5F-8E44-8C770FE0CF91}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9B52F9D8-7E67-470A-95B8-7A6A9D665E96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B52F9D8-7E67-470A-95B8-7A6A9D665E96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B52F9D8-7E67-470A-95B8-7A6A9D665E96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B52F9D8-7E67-470A-95B8-7A6A9D665E96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D6A7DA7-14AF-4751-B8F7-7B5086D5FE00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D6A7DA7-14AF-4751-B8F7-7B5086D5FE00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D6A7DA7-14AF-4751-B8F7-7B5086D5FE00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D6A7DA7-14AF-4751-B8F7-7B5086D5FE00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37B0B2CA-CF28-4507-8402-EA01EFD38A4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37B0B2CA-CF28-4507-8402-EA01EFD38A4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37B0B2CA-CF28-4507-8402-EA01EFD38A4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37B0B2CA-CF28-4507-8402-EA01EFD38A4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7DD9D7A1-C3CD-4225-8D82-EDCCB20409D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DD9D7A1-C3CD-4225-8D82-EDCCB20409D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DD9D7A1-C3CD-4225-8D82-EDCCB20409D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DD9D7A1-C3CD-4225-8D82-EDCCB20409D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A043CC35-E8E0-4C5F-8E44-8C770FE0CF91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A043CC35-E8E0-4C5F-8E44-8C770FE0CF91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A043CC35-E8E0-4C5F-8E44-8C770FE0CF91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A043CC35-E8E0-4C5F-8E44-8C770FE0CF91}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
