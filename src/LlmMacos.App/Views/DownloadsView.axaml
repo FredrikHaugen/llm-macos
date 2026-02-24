@@ -5,17 +5,30 @@
     <Grid RowDefinitions="Auto,*,Auto">
       <TextBlock Classes="headline" Text="Downloads" />
 
-      <ListBox Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}">
+      <ListBox Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" Margin="0,10,0,10">
         <ListBox.ItemTemplate>
           <DataTemplate>
-            <Border Margin="0,0,0,8" Padding="12" Background="#FFFFFFFF" CornerRadius="10" BorderBrush="#E6ECF8" BorderThickness="1">
-              <StackPanel Spacing="4">
-                <TextBlock FontWeight="SemiBold" Text="{Binding DownloadId}" />
-                <ProgressBar Minimum="0" Maximum="100" Value="{Binding Percent}" Height="8" />
+            <Border Classes="listItem" Margin="0,0,0,8" Padding="12">
+              <StackPanel Spacing="6">
+                <Grid ColumnDefinitions="*,Auto">
+                  <TextBlock FontWeight="SemiBold" Text="{Binding Label}" />
+                  <Border Grid.Column="1" Classes="badge">
+                    <TextBlock Foreground="{StaticResource BrushBrandAmber}" Text="{Binding Status}" />
+                  </Border>
+                </Grid>
+
+                <ProgressBar Minimum="0"
+                             Maximum="100"
+                             Value="{Binding Percent}"
+                             IsIndeterminate="{Binding IsIndeterminate}" />
+
                 <StackPanel Orientation="Horizontal" Spacing="10">
-                  <TextBlock Classes="subtle" Text="{Binding Status}" />
-                  <TextBlock Classes="subtle" Text="{Binding Message}" />
+                  <TextBlock Classes="subtle" Text="{Binding ProgressText}" />
+                  <TextBlock Classes="subtle" Text="{Binding SpeedText}" />
+                  <TextBlock Classes="subtle" Text="{Binding EtaText}" />
                 </StackPanel>
+
+                <TextBlock Classes="subtle" Text="{Binding Message}" />
               </StackPanel>
             </Border>
           </DataTemplate>
@@ -24,7 +37,7 @@
 
       <Grid Grid.Row="2" ColumnDefinitions="Auto,*">
         <Button Classes="subtle" Content="Cancel Selected" Command="{Binding CancelSelectedCommand}" />
-        <TextBlock Grid.Column="1" VerticalAlignment="Center" Classes="subtle" Text="{Binding StatusMessage}" />
+        <TextBlock Grid.Column="1" VerticalAlignment="Center" Classes="subtle" Text="{Binding StatusMessage}" Margin="10,0,0,0" />
       </Grid>
     </Grid>
   </Border>

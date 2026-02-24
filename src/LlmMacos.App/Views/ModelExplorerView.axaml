@@ -1,49 +1,52 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="LlmMacos.App.Views.ModelExplorerView">
-  <Grid ColumnDefinitions="2*,3*" Margin="6">
+  <Grid ColumnDefinitions="1.9*,2.1*" Margin="6">
     <Border Classes="card">
       <Grid RowDefinitions="Auto,Auto,*,Auto">
         <TextBlock Classes="headline" Text="Model Explorer" />
 
-        <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
-          <TextBox Watermark="Search GGUF models" Text="{Binding SearchText}" />
-          <Button Grid.Column="1" Classes="primary" Content="Search" Command="{Binding SearchCommand}" />
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="0,10,0,10">
+          <TextBox Watermark="Search text-generation GGUF models" Text="{Binding SearchText}" />
+          <Button Grid.Column="1" Classes="primary" Content="Search" Command="{Binding SearchCommand}" Margin="10,0,0,0" />
         </Grid>
 
         <ListBox Grid.Row="2"
                  ItemsSource="{Binding Results}"
                  SelectedItem="{Binding SelectedResult}"
-                 MinHeight="300">
+                 MinHeight="320">
           <ListBox.ItemTemplate>
             <DataTemplate>
-              <Border Margin="0,0,0,8" Padding="10" Background="#FFFFFFFF" CornerRadius="10" BorderBrush="#E6ECF8" BorderThickness="1">
-                <StackPanel>
+              <Border Classes="listItem" Margin="0,0,0,8" Padding="10">
+                <StackPanel Spacing="4">
                   <TextBlock FontWeight="SemiBold" Text="{Binding RepoId}" />
                   <TextBlock Classes="subtle" Text="{Binding Author}" />
-                  <TextBlock Classes="subtle" Text="{Binding Description}" />
+                  <TextBlock Classes="subtle">
+                    <Run Text="Task: " />
+                    <Run Text="{Binding PipelineTag}" />
+                  </TextBlock>
                 </StackPanel>
               </Border>
             </DataTemplate>
           </ListBox.ItemTemplate>
         </ListBox>
 
-        <TextBlock Grid.Row="3" Classes="subtle" Text="{Binding StatusMessage}" />
+        <TextBlock Grid.Row="3" Classes="subtle" Text="{Binding StatusMessage}" Margin="0,10,0,0" />
       </Grid>
     </Border>
 
-    <Border Grid.Column="1" Classes="card">
-      <Grid RowDefinitions="Auto,Auto,*,Auto">
+    <Border Grid.Column="1" Classes="card" Margin="12,0,0,0">
+      <Grid RowDefinitions="Auto,Auto,Auto,Auto,*,Auto,Auto">
         <TextBlock Classes="headline" Text="Selected Model" />
 
-        <StackPanel Grid.Row="1" Spacing="4">
+        <StackPanel Grid.Row="1" Spacing="6" Margin="0,10,0,0">
           <TextBlock FontSize="16" FontWeight="SemiBold" Text="{Binding SelectedResult.RepoId}" />
-          <TextBlock Classes="subtle" Text="Pick a GGUF file and download it to local storage." />
+          <TextBlock Classes="subtle" Text="Only text-generation GGUF files are supported." />
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Spacing="10">
+        <StackPanel Grid.Row="2" Spacing="10" Margin="0,12,0,0">
           <TextBlock FontWeight="SemiBold" Text="Available GGUF Files" />
-          <ComboBox ItemsSource="{Binding SelectedFiles}" SelectedItem="{Binding SelectedFile}" MinWidth="450">
+          <ComboBox ItemsSource="{Binding SelectedFiles}" SelectedItem="{Binding SelectedFile}" MinWidth="320">
             <ComboBox.ItemTemplate>
               <DataTemplate>
                 <StackPanel Orientation="Horizontal" Spacing="8">
@@ -55,10 +58,78 @@
           </ComboBox>
         </StackPanel>
 
-        <Grid Grid.Row="3" ColumnDefinitions="Auto,*" VerticalAlignment="Center">
+        <Border Grid.Row="3"
+                Classes="listItem"
+                Margin="0,14,0,0"
+                Padding="12"
+                IsVisible="{Binding IsDownloading}">
+          <StackPanel Spacing="6">
+            <TextBlock FontWeight="SemiBold" Text="{Binding ActiveDownloadLabel}" />
+            <ProgressBar Minimum="0"
+                         Maximum="100"
+                         Value="{Binding DownloadPercent}"
+                         IsIndeterminate="{Binding IsDownloadIndeterminate}" />
+            <StackPanel Orientation="Horizontal" Spacing="10">
+              <TextBlock Classes="subtle" Text="{Binding DownloadProgressText}" />
+              <TextBlock Classes="subtle" Text="{Binding DownloadSpeedText}" />
+              <TextBlock Classes="subtle" Text="{Binding DownloadEtaText}" />
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
+        <Border Grid.Row="4" Classes="listItem" Margin="0,14,0,0" Padding="12">
+          <Grid RowDefinitions="Auto,*,Auto">
+            <TextBlock FontWeight="SemiBold" Text="Download Queue" />
+
+            <ListBox Grid.Row="1"
+                     ItemsSource="{Binding RecentDownloads}"
+                     SelectedItem="{Binding SelectedDownload}"
+                     Margin="0,8,0,8"
+                     MinHeight="120">
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <Border Classes="listItem" Margin="0,0,0,8" Padding="10">
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                      <TextBlock FontWeight="SemiBold" Text="{Binding Label}" />
+                      <Border Grid.Column="1" Classes="badge">
+                        <TextBlock Text="{Binding Status}" />
+                      </Border>
+
+                      <ProgressBar Grid.Row="1"
+                                   Grid.ColumnSpan="2"
+                                   Margin="0,8,0,0"
+                                   Minimum="0"
+                                   Maximum="100"
+                                   Value="{Binding Percent}"
+                                   IsIndeterminate="{Binding IsIndeterminate}" />
+
+                      <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" Spacing="10" Margin="0,8,0,0">
+                        <TextBlock Classes="subtle" Text="{Binding ProgressText}" />
+                        <TextBlock Classes="subtle" Text="{Binding SpeedText}" />
+                        <TextBlock Classes="subtle" Text="{Binding EtaText}" />
+                      </StackPanel>
+
+                      <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Classes="subtle" Margin="0,8,0,0" Text="{Binding Message}" />
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+
+            <Button Grid.Row="2"
+                    Classes="subtle"
+                    Content="Cancel Selected"
+                    Command="{Binding CancelSelectedDownloadCommand}"
+                    HorizontalAlignment="Left" />
+          </Grid>
+        </Border>
+
+        <WrapPanel Grid.Row="5" Margin="0,14,0,0" ItemHeight="36">
           <Button Classes="primary" Content="Download" Command="{Binding DownloadSelectedCommand}" />
-          <TextBlock Grid.Column="1" VerticalAlignment="Center" Classes="subtle" Text="{Binding StatusMessage}" />
-        </Grid>
+          <Button Classes="subtle" Content="Cancel Active" Command="{Binding CancelActiveDownloadCommand}" Margin="10,0,0,0" />
+        </WrapPanel>
+
+        <TextBlock Grid.Row="6" VerticalAlignment="Center" Classes="subtle" Text="{Binding StatusMessage}" Margin="0,8,0,0" />
       </Grid>
     </Border>
   </Grid>

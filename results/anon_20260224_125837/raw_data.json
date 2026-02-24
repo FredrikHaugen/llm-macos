@@ -1,0 +1,28 @@
+{
+  "workspace": "results/anon_20260224_125837",
+  "inputs": {
+    "name": "",
+    "company": "",
+    "nationality": "",
+    "usernames": [],
+    "domain": "",
+    "emails": [],
+    "images": "",
+    "deep_osint": "0",
+    "llm_rerun_count": 0
+  },
+  "modules": {
+    "search_engines": {"status": "skipped", "output": "search_engines/search_results.txt"},
+    "social_media": {"status": "skipped", "output": "social_media/"},
+    "public_records": {"status": "skipped", "output": "public_records/"},
+    "companies": {"status": "skipped", "output": "companies/"},
+    "courts": {"status": "skipped", "output": "courts/"},
+    "documents": {"status": "skipped", "output": "documents/"},
+    "infrastructure": {"status": "skipped", "output": "infrastructure/"},
+    "meta_osint": {"status": "error", "output": "meta_osint/"},
+    "llm_enrich": {"status": "skipped", "output": "llm/llm_suggestions.json"},
+    "whois": {"status": "skipped", "output": "whois/whois.txt"},
+    "image_reverse": {"status": "skipped", "output": "metadata/exif.txt"}
+  },
+  "summary": {"ok": 0, "skipped": 10, "error": 1}
+}

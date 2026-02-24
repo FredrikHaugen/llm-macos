@@ -50,29 +50,88 @@ public sealed partial class DownloadsViewModel : ViewModelBase, IDisposable
                 existing = new DownloadItem
                 {
                     DownloadId = progress.DownloadId,
-                    Label = progress.DownloadId,
+                    Label = BuildLabel(progress),
                     Status = progress.Status,
-                    Message = progress.Message ?? string.Empty
+                    Message = progress.Message ?? string.Empty,
+                    Percent = 0,
+                    ProgressText = "0 B downloaded"
                 };
 
                 Items.Insert(0, existing);
             }
+            else if (!string.IsNullOrWhiteSpace(progress.RepoId) && !string.IsNullOrWhiteSpace(progress.FileName))
+            {
+                existing.Label = BuildLabel(progress);
+            }
 
             existing.Status = progress.Status;
-            existing.BytesDownloaded = progress.BytesDownloaded;
-            existing.TotalBytes = progress.TotalBytes ?? 0;
-            existing.Percent = progress.Percent ?? 0;
+            if (progress.BytesDownloaded > 0 || existing.BytesDownloaded == 0 || progress.Status is DownloadStatus.Queued)
+            {
+                existing.BytesDownloaded = progress.BytesDownloaded;
+            }
+
+            if (progress.TotalBytes.HasValue)
+            {
+                existing.TotalBytes = progress.TotalBytes;
+            }
+
+            if (progress.Percent.HasValue)
+            {
+                existing.Percent = progress.Percent;
+            }
+
+            if (progress.Status == DownloadStatus.Completed)
+            {
+                existing.IsIndeterminate = false;
+                existing.Percent = 100d;
+            }
+            else
+            {
+                existing.IsIndeterminate = progress.Status == DownloadStatus.Downloading && !progress.TotalBytes.HasValue;
+            }
+
+            existing.BytesPerSecond = progress.BytesPerSecond;
+            existing.Eta = progress.Eta;
             existing.Message = progress.Message ?? progress.Status.ToString();
+            existing.ProgressText = BuildProgressText(existing);
+            existing.SpeedText = progress.BytesPerSecond is > 0
+                ? $"{DownloadItem.FormatBytes(progress.BytesPerSecond.Value)}/s"
+                : string.Empty;
+            existing.EtaText = progress.Eta.HasValue && progress.Eta.Value > TimeSpan.Zero
+                ? $"ETA {progress.Eta.Value:mm\\:ss}"
+                : string.Empty;
 
             StatusMessage = progress.Status switch
             {
-                DownloadStatus.Downloading => "Downloads in progress...",
-                DownloadStatus.Completed => "Latest download completed.",
-                DownloadStatus.Failed => "A download failed.",
-                DownloadStatus.Cancelled => "Download cancelled.",
+                DownloadStatus.Downloading => $"Downloading {existing.Label}",
+                DownloadStatus.Completed => $"Completed {existing.Label}",
+                DownloadStatus.Failed => $"Failed {existing.Label}",
+                DownloadStatus.Cancelled => $"Cancelled {existing.Label}",
                 _ => "No active downloads."
             };
         });
+    }
+
+    private static string BuildLabel(DownloadProgress progress)
+    {
+        if (!string.IsNullOrWhiteSpace(progress.RepoId) && !string.IsNullOrWhiteSpace(progress.FileName))
+        {
+            return $"{progress.RepoId} / {Path.GetFileName(progress.FileName)}";
+        }
+
+        return progress.DownloadId;
+    }
+
+    private static string BuildProgressText(DownloadItem item)
+    {
+        var downloaded = DownloadItem.FormatBytes(item.BytesDownloaded);
+        if (item.TotalBytes is > 0)
+        {
+            var total = DownloadItem.FormatBytes(item.TotalBytes.Value);
+            return $"{downloaded} / {total}";
+        }
+
+        return $"{downloaded} downloaded";
     }
 
     public void Dispose()

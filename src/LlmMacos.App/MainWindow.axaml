@@ -14,10 +14,13 @@
         <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
           <StackPanel>
             <TextBlock Classes="headline" Text="LlmMacos" />
-            <TextBlock Classes="subtle" Text="Discover, download and chat with local GGUF models on macOS." />
+            <TextBlock Classes="subtle" Text="Discover, download and chat with local GGUF LLM models on macOS." />
           </StackPanel>
-          <Border Background="#DFF9F3" CornerRadius="100" Padding="12,6" HorizontalAlignment="Right">
-            <TextBlock Foreground="#0A8A74" FontWeight="SemiBold" Text="Apple Silicon · Local Runtime" />
+
+          <Border Classes="badge" HorizontalAlignment="Right">
+            <TextBlock Foreground="{StaticResource BrushTextStrong}"
+                       FontWeight="SemiBold"
+                       Text="Apple Silicon · Charcoal" />
           </Border>
         </Grid>
       </Border>
@@ -25,9 +28,6 @@
       <TabControl Grid.Row="1">
         <TabItem Header="Models">
           <views:ModelExplorerView DataContext="{Binding ModelExplorer}" />
-        </TabItem>
-        <TabItem Header="Downloads">
-          <views:DownloadsView DataContext="{Binding Downloads}" />
         </TabItem>
         <TabItem Header="Chat">
           <views:ChatView DataContext="{Binding Chat}" />

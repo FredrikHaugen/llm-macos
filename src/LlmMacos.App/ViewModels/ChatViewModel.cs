@@ -4,6 +4,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LlmMacos.App.Models;
+using LlmMacos.App.Services;
 using LlmMacos.Core.Abstractions;
 using LlmMacos.Core.Models;
 using Microsoft.Extensions.Logging;
@@ -73,9 +74,10 @@ public sealed partial class ChatViewModel : ViewModelBase
     {
         await _modelRegistryService.ReconcileAsync(CancellationToken.None);
         var models = await _modelRegistryService.ListAsync(CancellationToken.None);
+        var llmOnlyModels = models.Where(m => m.IsLlm).ToList();
 
         AvailableModels.Clear();
-        foreach (var model in models)
+        foreach (var model in llmOnlyModels)
         {
             AvailableModels.Add(model);
         }
@@ -92,6 +94,12 @@ public sealed partial class ChatViewModel : ViewModelBase
         if (SelectedModel is null)
         {
             StatusMessage = "Select a downloaded model first.";
+            return;
+        }
+
+        if (!SelectedModel.IsLlm)
+        {
+            StatusMessage = "Only text-generation LLM models are supported.";
             return;
         }
 
@@ -210,7 +218,7 @@ public sealed partial class ChatViewModel : ViewModelBase
                 }
 
                 sb.Append(chunk.Text);
-                var current = sb.ToString();
+                var current = ChatOutputSanitizer.Sanitize(sb.ToString());
 
                 Dispatcher.UIThread.Post(() =>
                 {
@@ -218,7 +226,7 @@ public sealed partial class ChatViewModel : ViewModelBase
                 });
             }
 
-            var final = sb.ToString();
+            var final = ChatOutputSanitizer.Sanitize(sb.ToString());
             _currentSession.Messages.Add(new ChatMessage("user", userText, userMessage.CreatedAt));
             _currentSession.Messages.Add(new ChatMessage("assistant", final, assistantMessage.CreatedAt));
             await _chatSessionService.SaveAsync(_currentSession, CancellationToken.None);
@@ -279,10 +287,14 @@ public sealed partial class ChatViewModel : ViewModelBase
             Messages.Clear();
             foreach (var message in session.Messages)
             {
+                var content = message.Role.Equals("assistant", StringComparison.OrdinalIgnoreCase)
+                    ? ChatOutputSanitizer.Sanitize(message.Content)
+                    : message.Content;
+
                 Messages.Add(new ChatMessageItem
                 {
                     Role = message.Role,
-                    Content = message.Content,
+                    Content = content,
                     CreatedAt = message.CreatedAt
                 });
             }

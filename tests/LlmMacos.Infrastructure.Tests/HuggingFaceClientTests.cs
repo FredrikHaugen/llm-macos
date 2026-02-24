@@ -16,6 +16,7 @@ public sealed class HuggingFaceClientTests
         var handler = new StubHandler((req, _) =>
         {
             req.RequestUri!.Query.Should().Contain("filter=gguf");
+            req.RequestUri!.Query.Should().Contain("pipeline_tag=text-generation");
             req.RequestUri!.Query.Should().Contain("search=llama");
 
             const string payload = """
@@ -23,6 +24,8 @@ public sealed class HuggingFaceClientTests
                                      {
                                        "id": "org/model-a",
                                        "author": "org",
+                                       "pipeline_tag": "text-generation",
+                                       "tags": [ "gguf", "text-generation" ],
                                        "downloads": 100,
                                        "likes": 12,
                                        "private": false,
@@ -33,11 +36,13 @@ public sealed class HuggingFaceClientTests
                                      {
                                        "id": "org/model-b",
                                        "author": "org",
+                                       "pipeline_tag": "image-classification",
+                                       "tags": [ "gguf", "image-classification" ],
                                        "downloads": 50,
                                        "likes": 2,
                                        "private": false,
                                        "siblings": [
-                                         { "rfilename": "README.md", "size": 10 }
+                                         { "rfilename": "model-q4.gguf", "size": 10 }
                                        ]
                                      }
                                    ]
@@ -55,6 +60,7 @@ public sealed class HuggingFaceClientTests
         results.Should().HaveCount(1);
         results[0].RepoId.Should().Be("org/model-a");
         results[0].Files.Should().ContainSingle(f => f.IsGguf);
+        results[0].IsLlm.Should().BeTrue();
     }
 
     [Fact]
@@ -88,6 +94,38 @@ public sealed class HuggingFaceClientTests
 
         details.RepoId.Should().Be("org/model-a");
         details.Files.Should().ContainSingle(f => f.IsGguf);
+    }
+
+    [Fact]
+    public async Task SearchModelsAsync_ExcludesModels_WhenPipelineTagIsMissing()
+    {
+        var handler = new StubHandler((_, _) =>
+        {
+            const string payload = """
+                                   [
+                                     {
+                                       "id": "org/model-a",
+                                       "author": "org",
+                                       "downloads": 100,
+                                       "likes": 12,
+                                       "private": false,
+                                       "siblings": [
+                                         { "rfilename": "model-q4.gguf", "size": 123 }
+                                       ]
+                                     }
+                                   ]
+                                   """;
+
+            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(payload, Encoding.UTF8, "application/json")
+            });
+        });
+
+        var client = CreateClient(handler, token: null);
+        var results = await client.SearchModelsAsync(new ModelSearchQuery("llama", Limit: 20), CancellationToken.None);
+
+        results.Should().BeEmpty();
     }
 
     private static HuggingFaceClient CreateClient(HttpMessageHandler handler, string? token)

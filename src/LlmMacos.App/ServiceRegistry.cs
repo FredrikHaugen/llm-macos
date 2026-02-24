@@ -47,7 +47,6 @@ public static class ServiceRegistry
 
         collection.AddSingleton<MainWindowViewModel>();
         collection.AddSingleton<ModelExplorerViewModel>();
-        collection.AddSingleton<DownloadsViewModel>();
         collection.AddSingleton<ChatViewModel>();
         collection.AddSingleton<SettingsViewModel>();
 

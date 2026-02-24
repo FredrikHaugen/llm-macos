@@ -1,0 +1,168 @@
+/Users/figge/.recon-ng/modules/recon/contacts-contacts/mangle.py:35: SyntaxWarning: "\s" is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\s"? A raw string is also an option.
+  sub_pattern = '[\s]'
+/Users/figge/.recon-ng/modules/recon/companies-contacts/bing_linkedin_cache.py:59: SyntaxWarning: "\d" is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\d"? A raw string is also an option.
+  if fname is None or 'LinkedIn' in fullname or 'profiles' in name.lower() or re.search('^\d+$',fname):
+/Users/figge/.recon-ng/modules/recon/companies-contacts/bing_linkedin_cache.py:99: SyntaxWarning: "\." is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\."? A raw string is also an option.
+  m = re.search('\.{3} (?P<title>.+?) at ', snippet)
+/Users/figge/.recon-ng/modules/recon/domains-contacts/wikileaker.py:49: SyntaxWarning: "\." is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\."? A raw string is also an option.
+  emails = re.findall("email:\\xa0([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)",
+[31m[!] 'google_api' key not set. pushpin module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'virustotal_api' key not set. virustotal module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/netblocks-hosts/shodan_net' disabled. Dependency required: ''shodan''.[m
+[31m[!] Module 'recon/netblocks-hosts/censys_netblock' disabled. Dependency required: ''censys''.[m
+[31m[!] 'github_api' key not set. github_dorks module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'github_api' key not set. github_repos module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/contacts-contacts/abc' disabled. Dependency required: ''bs4''.[m
+[31m[!] Module 'recon/companies-multi/shodan_org' disabled. Dependency required: ''shodan''.[m
+[31m[!] Module 'recon/companies-multi/censys_tls_subjects' disabled. Dependency required: ''censys''.[m
+[31m[!] Module 'recon/companies-multi/censys_org' disabled. Dependency required: ''censys''.[m
+[31m[!] 'github_api' key not set. github_miner module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/contacts-domains/censys_email_to_domains' disabled. Dependency required: ''censys''.[m
+[31m[!] 'censysio_id' key not set. censysio module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'censysio_secret' key not set. censysio module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'google_api' key not set. geocode module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'google_api' key not set. reverse_geocode module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'flickr_api' key not set. flickr module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'google_api' key not set. youtube module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'twitter_api' key not set. twitter module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'twitter_secret' key not set. twitter module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/locations-pushpins/shodan' disabled. Dependency required: ''shodan''.[m
+[31m[!] 'bing_api' key not set. bing_linkedin_contacts module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'github_api' key not set. github_users module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'github_api' key not set. github_commits module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'hashes_api' key not set. hashes_org module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/netblocks-companies/censys_netblock_company' disabled. Dependency required: ''censys''.[m
+[31m[!] 'fullcontact_api' key not set. fullcontact module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'bing_api' key not set. bing_linkedin_cache module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/companies-contacts/censys_email_address' disabled. Dependency required: ''censys''.[m
+[31m[!] 'spyse_api' key not set. spyse_subdomains module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/domains-hosts/censys_domain' disabled. Dependency required: ''censys''.[m
+[31m[!] 'binaryedge_api' key not set. binaryedge module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'builtwith_api' key not set. builtwith module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/domains-hosts/shodan_hostname' disabled. Dependency required: ''shodan''.[m
+[31m[!] 'bing_api' key not set. bing_domain_api module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'hunter_io' key not set. hunter_io module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/domains-contacts/metacrawler' disabled. Dependency required: ''PyPDF3''.[m
+[31m[!] 'hibp_api' key not set. hibp_breach module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'hibp_api' key not set. hibp_paste module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'twitter_api' key not set. twitter_mentions module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'twitter_secret' key not set. twitter_mentions module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'namechk_api' key not set. namechk module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'twitter_api' key not set. twitter_mentioned module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'twitter_secret' key not set. twitter_mentioned module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'binaryedge_api' key not set. binaryedge module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/hosts-ports/shodan_ip' disabled. Dependency required: ''shodan''.[m
+[31m[!] Module 'recon/ports-hosts/ssl_scan' disabled. Dependency required: ''cryptography''.[m
+[31m[!] 'whoxy_api' key not set. whoxy_dns module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/companies-domains/censys_subdomains' disabled. Dependency required: ''censys''.[m
+[31m[!] 'ipinfodb_api' key not set. ipinfodb module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'virustotal_api' key not set. virustotal module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/hosts-hosts/censys_query' disabled. Dependency required: ''censys''.[m
+[31m[!] Module 'recon/hosts-hosts/censys_ip' disabled. Dependency required: ''censys''.[m
+[31m[!] Module 'recon/hosts-hosts/censys_hostname' disabled. Dependency required: ''censys''.[m
+[31m[!] 'ipstack_api' key not set. ipstack module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'bing_api' key not set. bing_ip module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'whoxy_api' key not set. whoxy_whois module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/domains-companies/censys_companies' disabled. Dependency required: ''censys''.[m
+[31m[!] Version check failed (FileNotFoundError).[m
+[32m[*][m Your version of Recon-ng does not match the latest release.
+[32m[*][m Please consider updating before further use.
+[34m[*][m Remote version:  5.1.2
+[34m[*][m Local version:   0
+
+    _/_/_/    _/_/_/_/    _/_/_/    _/_/_/    _/      _/            _/      _/    _/_/_/
+   _/    _/  _/        _/        _/      _/  _/_/    _/            _/_/    _/  _/       
+  _/_/_/    _/_/_/    _/        _/      _/  _/  _/  _/  _/_/_/_/  _/  _/  _/  _/  _/_/_/
+ _/    _/  _/        _/        _/      _/  _/    _/_/            _/    _/_/  _/      _/ 
+_/    _/  _/_/_/_/    _/_/_/    _/_/_/    _/      _/            _/      _/    _/_/_/    
+
+
+                                          /\
+                                         / \\ /\
+    Sponsored by...               /\  /\/  \\V  \/\
+                                 / \\/ // \\\\\ \\ \/\
+                                // // BLACK HILLS \/ \\
+                               www.blackhillsinfosec.com
+
+                  ____   ____   ____   ____ _____ _  ____   ____  ____
+                 |____] | ___/ |____| |       |   | |____  |____ |
+                 |      |   \_ |    | |____   |   |  ____| |____ |____
+                                   www.practisec.com
+
+                      [33m[recon-ng v5.1.2, Tim Tomes (@lanmaster53)][m                       
+
+[34m[73] Recon modules[m
+[34m[20] Disabled modules[m
+[34m[8]  Reporting modules[m
+[34m[4]  Import modules[m
+[34m[2]  Exploitation modules[m
+[34m[2]  Discovery modules[m
+
+[recon-ng][default] > /Users/figge/.recon-ng/modules/recon/contacts-contacts/mangle.py:35: SyntaxWarning: "\s" is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\s"? A raw string is also an option.
+  sub_pattern = '[\s]'
+/Users/figge/.recon-ng/modules/recon/companies-contacts/bing_linkedin_cache.py:59: SyntaxWarning: "\d" is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\d"? A raw string is also an option.
+  if fname is None or 'LinkedIn' in fullname or 'profiles' in name.lower() or re.search('^\d+$',fname):
+/Users/figge/.recon-ng/modules/recon/companies-contacts/bing_linkedin_cache.py:99: SyntaxWarning: "\." is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\."? A raw string is also an option.
+  m = re.search('\.{3} (?P<title>.+?) at ', snippet)
+/Users/figge/.recon-ng/modules/recon/domains-contacts/wikileaker.py:49: SyntaxWarning: "\." is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\."? A raw string is also an option.
+  emails = re.findall("email:\\xa0([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)",
+workspaces create anon
+[31m[!] 'google_api' key not set. pushpin module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'virustotal_api' key not set. virustotal module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/netblocks-hosts/shodan_net' disabled. Dependency required: ''shodan''.[m
+[31m[!] Module 'recon/netblocks-hosts/censys_netblock' disabled. Dependency required: ''censys''.[m
+[31m[!] 'github_api' key not set. github_dorks module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'github_api' key not set. github_repos module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/contacts-contacts/abc' disabled. Dependency required: ''bs4''.[m
+[31m[!] Module 'recon/companies-multi/shodan_org' disabled. Dependency required: ''shodan''.[m
+[31m[!] Module 'recon/companies-multi/censys_tls_subjects' disabled. Dependency required: ''censys''.[m
+[31m[!] Module 'recon/companies-multi/censys_org' disabled. Dependency required: ''censys''.[m
+[31m[!] 'github_api' key not set. github_miner module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/contacts-domains/censys_email_to_domains' disabled. Dependency required: ''censys''.[m
+[31m[!] 'censysio_id' key not set. censysio module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'censysio_secret' key not set. censysio module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'google_api' key not set. geocode module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'google_api' key not set. reverse_geocode module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'flickr_api' key not set. flickr module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'google_api' key not set. youtube module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'twitter_api' key not set. twitter module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'twitter_secret' key not set. twitter module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/locations-pushpins/shodan' disabled. Dependency required: ''shodan''.[m
+[31m[!] 'bing_api' key not set. bing_linkedin_contacts module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'github_api' key not set. github_users module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'github_api' key not set. github_commits module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'hashes_api' key not set. hashes_org module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/netblocks-companies/censys_netblock_company' disabled. Dependency required: ''censys''.[m
+[31m[!] 'fullcontact_api' key not set. fullcontact module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'bing_api' key not set. bing_linkedin_cache module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/companies-contacts/censys_email_address' disabled. Dependency required: ''censys''.[m
+[31m[!] 'spyse_api' key not set. spyse_subdomains module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/domains-hosts/censys_domain' disabled. Dependency required: ''censys''.[m
+[31m[!] 'binaryedge_api' key not set. binaryedge module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'builtwith_api' key not set. builtwith module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/domains-hosts/shodan_hostname' disabled. Dependency required: ''shodan''.[m
+[31m[!] 'bing_api' key not set. bing_domain_api module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'hunter_io' key not set. hunter_io module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/domains-contacts/metacrawler' disabled. Dependency required: ''PyPDF3''.[m
+[31m[!] 'hibp_api' key not set. hibp_breach module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'hibp_api' key not set. hibp_paste module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'twitter_api' key not set. twitter_mentions module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'twitter_secret' key not set. twitter_mentions module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'namechk_api' key not set. namechk module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'twitter_api' key not set. twitter_mentioned module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'twitter_secret' key not set. twitter_mentioned module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'binaryedge_api' key not set. binaryedge module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/hosts-ports/shodan_ip' disabled. Dependency required: ''shodan''.[m
+[31m[!] Module 'recon/ports-hosts/ssl_scan' disabled. Dependency required: ''cryptography''.[m
+[31m[!] 'whoxy_api' key not set. whoxy_dns module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/companies-domains/censys_subdomains' disabled. Dependency required: ''censys''.[m
+[31m[!] 'ipinfodb_api' key not set. ipinfodb module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'virustotal_api' key not set. virustotal module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/hosts-hosts/censys_query' disabled. Dependency required: ''censys''.[m
+[31m[!] Module 'recon/hosts-hosts/censys_ip' disabled. Dependency required: ''censys''.[m
+[31m[!] Module 'recon/hosts-hosts/censys_hostname' disabled. Dependency required: ''censys''.[m
+[31m[!] 'ipstack_api' key not set. ipstack module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'bing_api' key not set. bing_ip module will likely fail at runtime. See 'keys add'.[m
+[31m[!] 'whoxy_api' key not set. whoxy_whois module will likely fail at runtime. See 'keys add'.[m
+[31m[!] Module 'recon/domains-companies/censys_companies' disabled. Dependency required: ''censys''.[m
+[recon-ng][anon] > exit

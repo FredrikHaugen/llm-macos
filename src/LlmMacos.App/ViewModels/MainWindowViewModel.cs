@@ -8,13 +8,11 @@ public sealed class MainWindowViewModel : ViewModelBase
 
     public MainWindowViewModel(
         ModelExplorerViewModel modelExplorer,
-        DownloadsViewModel downloads,
         ChatViewModel chat,
         SettingsViewModel settings,
         ILogger<MainWindowViewModel> logger)
     {
         ModelExplorer = modelExplorer;
-        Downloads = downloads;
         Chat = chat;
         Settings = settings;
         _logger = logger;
@@ -23,8 +21,6 @@ public sealed class MainWindowViewModel : ViewModelBase
     }
 
     public ModelExplorerViewModel ModelExplorer { get; }
-
-    public DownloadsViewModel Downloads { get; }
 
     public ChatViewModel Chat { get; }
 

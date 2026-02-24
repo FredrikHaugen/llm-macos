@@ -56,6 +56,12 @@ public sealed class LlamaSharpInferenceService : IInferenceService
             _executor = new InteractiveExecutor(_context);
             ActiveModel = model with { State = ModelState.Loaded, LastUsedAt = DateTimeOffset.UtcNow };
         }
+        catch (Exception ex) when (IsNativeBackendFailure(ex))
+        {
+            throw new InvalidOperationException(
+                "Failed to initialize LLama native backend. Ensure LLamaSharp.Backend.Cpu is installed and run the app on macOS arm64.",
+                ex);
+        }
         finally
         {
             _stateLock.Release();
@@ -141,5 +147,21 @@ public sealed class LlamaSharpInferenceService : IInferenceService
         sb.AppendLine($"User: {turn.UserMessage}");
         sb.Append("Assistant: ");
         return sb.ToString();
+    }
+
+    private static bool IsNativeBackendFailure(Exception ex)
+    {
+        var current = ex;
+        while (current is not null)
+        {
+            if (current is DllNotFoundException or BadImageFormatException or TypeInitializationException)
+            {
+                return true;
+            }
+
+            current = current.InnerException;
+        }
+
+        return false;
     }
 }

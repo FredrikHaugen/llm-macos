@@ -5,6 +5,8 @@ public sealed record LocalModel(
     string RepoId,
     string Revision,
     string FileName,
+    string? PipelineTag,
+    bool IsLlm,
     string LocalPath,
     long Bytes,
     DateTimeOffset DownloadedAt,

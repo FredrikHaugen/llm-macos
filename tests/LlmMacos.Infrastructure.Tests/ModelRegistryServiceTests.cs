@@ -19,6 +19,8 @@ public sealed class ModelRegistryServiceTests
             RepoId: "org/model",
             Revision: "main",
             FileName: "model.gguf",
+            PipelineTag: "text-generation",
+            IsLlm: true,
             LocalPath: Path.Combine(paths.Paths.Models, "missing.gguf"),
             Bytes: 100,
             DownloadedAt: DateTimeOffset.UtcNow,

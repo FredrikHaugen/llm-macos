@@ -1,0 +1,12 @@
+{
+  "real_name": {"primary": null, "confidence": 0.0, "candidates": []},
+  "possible_usernames": {"primary": null, "confidence": 0.0, "candidates": []},
+  "phone_numbers": {"primary": null, "confidence": 0.0, "candidates": []},
+  "emails": {"primary": null, "confidence": 0.0, "candidates": []},
+  "addresses": {"primary": null, "confidence": 0.0, "candidates": []},
+  "nationality": {"primary": null, "confidence": 0.0, "candidates": []},
+  "physical_traits": {"primary": null, "confidence": 0.0, "candidates": []},
+  "background_summary": {"text": null, "confidence": 0.0, "evidence": []},
+  "organizations": {"primary": null, "confidence": 0.0, "candidates": []},
+  "domains": {"primary": null, "confidence": 0.0, "candidates": []}
+}

@@ -7,18 +7,41 @@ using System.Text.Json;
 using LlmMacos.Core.Abstractions;
 using LlmMacos.Core.Models;
 using LlmMacos.Core.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LlmMacos.Infrastructure.Services;
 
 public sealed class DownloadService : IDownloadService
 {
+    private static readonly TimeSpan DefaultReadInactivityTimeout = TimeSpan.FromSeconds(45);
+    private static readonly TimeSpan DefaultRetryDelay = TimeSpan.FromSeconds(2);
+    private const int DefaultMaxRetryAttempts = 5;
+
     private readonly HttpClient _httpClient;
+    private readonly TimeSpan _readInactivityTimeout;
+    private readonly TimeSpan _retryDelay;
+    private readonly int _maxRetryAttempts;
     private readonly Subject<DownloadProgress> _progressSubject = new();
     private readonly ConcurrentDictionary<string, CancellationTokenSource> _inFlight = new(StringComparer.Ordinal);
 
+    [ActivatorUtilitiesConstructor]
     public DownloadService(HttpClient httpClient)
+        : this(httpClient, DefaultReadInactivityTimeout, DefaultMaxRetryAttempts, DefaultRetryDelay)
+    {
+    }
+
+    public DownloadService(HttpClient httpClient, TimeSpan readInactivityTimeout, int maxRetryAttempts, TimeSpan retryDelay)
     {
         _httpClient = httpClient;
+        _readInactivityTimeout = readInactivityTimeout > TimeSpan.Zero
+            ? readInactivityTimeout
+            : throw new ArgumentOutOfRangeException(nameof(readInactivityTimeout));
+        _maxRetryAttempts = maxRetryAttempts >= 0
+            ? maxRetryAttempts
+            : throw new ArgumentOutOfRangeException(nameof(maxRetryAttempts));
+        _retryDelay = retryDelay >= TimeSpan.Zero
+            ? retryDelay
+            : throw new ArgumentOutOfRangeException(nameof(retryDelay));
     }
 
     public IObservable<DownloadProgress> ProgressStream => _progressSubject;
@@ -33,6 +56,8 @@ public sealed class DownloadService : IDownloadService
 
         _progressSubject.OnNext(new DownloadProgress(
             DownloadId: request.DownloadId,
+            RepoId: request.RepoId,
+            FileName: request.FileName,
             Status: DownloadStatus.Queued,
             BytesDownloaded: 0,
             TotalBytes: null,
@@ -70,6 +95,7 @@ public sealed class DownloadService : IDownloadService
         {
             var remote = await GetRemoteMetadataAsync(request, ct);
             var localMeta = await ReadLocalMetadataAsync(metaPath, ct);
+            long downloadedBytes = 0;
 
             if (localMeta is not null && !string.Equals(localMeta.Etag, remote.Etag, StringComparison.Ordinal))
             {
@@ -88,6 +114,7 @@ public sealed class DownloadService : IDownloadService
             await SaveLocalMetadataAsync(metaPath, new LocalDownloadMetadata(remote.TotalBytes, remote.Etag), ct);
 
             var canResume = remote.AcceptRanges;
+            var totalBytes = remote.TotalBytes;
             var startingOffset = canResume ? existingBytes : 0;
 
             if (!canResume && existingBytes > 0)
@@ -96,78 +123,86 @@ public sealed class DownloadService : IDownloadService
                 startingOffset = 0;
             }
 
-            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, BuildDownloadUri(request));
-            ApplyBearerToken(requestMessage, request.BearerToken);
-            if (startingOffset > 0)
+            downloadedBytes = startingOffset;
+            PublishProgress(
+                request,
+                DownloadStatus.Downloading,
+                downloadedBytes,
+                totalBytes,
+                ProgressMath.CalculatePercent(downloadedBytes, totalBytes),
+                null,
+                downloadedBytes > 0 ? "Resuming download..." : "Starting download");
+
+            var attempt = 0;
+            while (true)
             {
-                requestMessage.Headers.Range = new RangeHeaderValue(startingOffset, null);
-            }
+                ct.ThrowIfCancellationRequested();
 
-            using var response = await _httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, ct);
-            if (startingOffset > 0 && response.StatusCode == HttpStatusCode.OK)
-            {
-                startingOffset = 0;
-                DeleteFileIfExists(partPath);
-            }
-
-            response.EnsureSuccessStatusCode();
-
-            await using var contentStream = await response.Content.ReadAsStreamAsync(ct);
-            await using var fileStream = new FileStream(
-                partPath,
-                startingOffset > 0 ? FileMode.Append : FileMode.Create,
-                FileAccess.Write,
-                FileShare.None,
-                bufferSize: 81920,
-                useAsync: true);
-
-            var buffer = new byte[1024 * 128];
-            var downloadedBytes = startingOffset;
-            var totalBytes = remote.TotalBytes;
-            var progressTimer = Stopwatch.StartNew();
-            var speedTimer = Stopwatch.StartNew();
-            long lastSpeedBytes = downloadedBytes;
-
-            PublishProgress(request.DownloadId, DownloadStatus.Downloading, downloadedBytes, totalBytes, null, null, "Starting download");
-
-            int bytesRead;
-            while ((bytesRead = await contentStream.ReadAsync(buffer.AsMemory(0, buffer.Length), ct)) > 0)
-            {
-                await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead), ct);
-                downloadedBytes += bytesRead;
-
-                if (progressTimer.ElapsedMilliseconds < 250)
+                try
                 {
-                    continue;
+                    downloadedBytes = await DownloadAttemptAsync(
+                        request,
+                        partPath,
+                        canResume,
+                        downloadedBytes,
+                        totalBytes,
+                        ct);
+                    break;
                 }
+                catch (Exception ex) when (IsRetryable(ex, ct) && attempt < _maxRetryAttempts)
+                {
+                    attempt++;
+                    downloadedBytes = GetFileLength(partPath);
 
-                var bytesDelta = downloadedBytes - lastSpeedBytes;
-                var bytesPerSecond = ProgressMath.CalculateBytesPerSecond(bytesDelta, speedTimer.Elapsed);
-                var eta = ProgressMath.CalculateEta(downloadedBytes, totalBytes, bytesPerSecond);
-                var percent = ProgressMath.CalculatePercent(downloadedBytes, totalBytes);
+                    var message = $"Connection stalled, retrying ({attempt}/{_maxRetryAttempts})...";
+                    PublishProgress(
+                        request,
+                        DownloadStatus.Downloading,
+                        downloadedBytes,
+                        totalBytes,
+                        ProgressMath.CalculatePercent(downloadedBytes, totalBytes),
+                        null,
+                        message);
 
-                PublishProgress(request.DownloadId, DownloadStatus.Downloading, downloadedBytes, totalBytes, percent, bytesPerSecond, null, eta);
-
-                progressTimer.Restart();
-                speedTimer.Restart();
-                lastSpeedBytes = downloadedBytes;
+                    if (_retryDelay > TimeSpan.Zero)
+                    {
+                        await Task.Delay(_retryDelay, ct);
+                    }
+                }
             }
 
-            await fileStream.FlushAsync(ct);
             File.Move(partPath, request.DestinationPath, true);
             DeleteFileIfExists(metaPath);
 
             var finalPercent = ProgressMath.CalculatePercent(downloadedBytes, totalBytes) ?? 100;
-            PublishProgress(request.DownloadId, DownloadStatus.Completed, downloadedBytes, totalBytes, finalPercent, null, "Completed", TimeSpan.Zero);
+            PublishProgress(request, DownloadStatus.Completed, downloadedBytes, totalBytes, finalPercent, null, "Completed", TimeSpan.Zero);
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException) when (ct.IsCancellationRequested)
         {
-            PublishProgress(request.DownloadId, DownloadStatus.Cancelled, 0, null, null, null, "Cancelled");
+            var current = File.Exists(partPath) ? new FileInfo(partPath).Length : 0;
+            var total = await TryReadTotalBytesAsync(metaPath, CancellationToken.None);
+            PublishProgress(
+                request,
+                DownloadStatus.Cancelled,
+                current,
+                total,
+                ProgressMath.CalculatePercent(current, total),
+                null,
+                "Cancelled");
             throw;
         }
         catch (Exception ex)
         {
-            PublishProgress(request.DownloadId, DownloadStatus.Failed, 0, null, null, null, ex.Message);
+            var current = File.Exists(partPath) ? new FileInfo(partPath).Length : 0;
+            var total = await TryReadTotalBytesAsync(metaPath, CancellationToken.None);
+            PublishProgress(
+                request,
+                DownloadStatus.Failed,
+                current,
+                total,
+                ProgressMath.CalculatePercent(current, total),
+                null,
+                ex.Message);
             throw;
         }
         finally
@@ -179,8 +214,155 @@ public sealed class DownloadService : IDownloadService
         }
     }
 
+    private async Task<long> DownloadAttemptAsync(
+        DownloadRequest request,
+        string partPath,
+        bool canResume,
+        long currentDownloadedBytes,
+        long? totalBytes,
+        CancellationToken ct)
+    {
+        var startingOffset = canResume ? GetFileLength(partPath) : 0;
+        if (!canResume && startingOffset > 0)
+        {
+            DeleteFileIfExists(partPath);
+            startingOffset = 0;
+            currentDownloadedBytes = 0;
+        }
+
+        using var requestMessage = new HttpRequestMessage(HttpMethod.Get, BuildDownloadUri(request));
+        ApplyBearerToken(requestMessage, request.BearerToken);
+
+        if (canResume && startingOffset > 0)
+        {
+            requestMessage.Headers.Range = new RangeHeaderValue(startingOffset, null);
+        }
+
+        using var response = await _httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, ct);
+        if (startingOffset > 0 && response.StatusCode == HttpStatusCode.OK)
+        {
+            DeleteFileIfExists(partPath);
+            startingOffset = 0;
+            currentDownloadedBytes = 0;
+
+            PublishProgress(
+                request,
+                DownloadStatus.Downloading,
+                currentDownloadedBytes,
+                totalBytes,
+                ProgressMath.CalculatePercent(currentDownloadedBytes, totalBytes),
+                null,
+                "Server ignored resume request. Restarting from byte 0...");
+        }
+
+        response.EnsureSuccessStatusCode();
+
+        await using var contentStream = await response.Content.ReadAsStreamAsync(ct);
+        await using var fileStream = new FileStream(
+            partPath,
+            startingOffset > 0 ? FileMode.Append : FileMode.Create,
+            FileAccess.Write,
+            FileShare.None,
+            bufferSize: 81920,
+            useAsync: true);
+
+        var buffer = new byte[1024 * 128];
+        var downloadedBytes = startingOffset;
+        var progressTimer = Stopwatch.StartNew();
+        var speedTimer = Stopwatch.StartNew();
+        long lastSpeedBytes = downloadedBytes;
+
+        if (downloadedBytes > 0 && downloadedBytes != currentDownloadedBytes)
+        {
+            PublishProgress(
+                request,
+                DownloadStatus.Downloading,
+                downloadedBytes,
+                totalBytes,
+                ProgressMath.CalculatePercent(downloadedBytes, totalBytes),
+                null,
+                "Resuming download...");
+        }
+
+        while (true)
+        {
+            var bytesRead = await ReadWithInactivityTimeoutAsync(contentStream, buffer.AsMemory(0, buffer.Length), ct);
+            if (bytesRead == 0)
+            {
+                break;
+            }
+
+            await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead), ct);
+            downloadedBytes += bytesRead;
+
+            if (progressTimer.ElapsedMilliseconds < 250)
+            {
+                continue;
+            }
+
+            var bytesDelta = downloadedBytes - lastSpeedBytes;
+            var bytesPerSecond = ProgressMath.CalculateBytesPerSecond(bytesDelta, speedTimer.Elapsed);
+            var eta = ProgressMath.CalculateEta(downloadedBytes, totalBytes, bytesPerSecond);
+            var percent = ProgressMath.CalculatePercent(downloadedBytes, totalBytes);
+
+            PublishProgress(request, DownloadStatus.Downloading, downloadedBytes, totalBytes, percent, bytesPerSecond, null, eta);
+
+            progressTimer.Restart();
+            speedTimer.Restart();
+            lastSpeedBytes = downloadedBytes;
+        }
+
+        await fileStream.FlushAsync(ct);
+
+        if (totalBytes.HasValue && downloadedBytes < totalBytes.Value)
+        {
+            throw new IOException($"Download stream ended before completion ({downloadedBytes}/{totalBytes.Value} bytes).");
+        }
+
+        var finalBytesDelta = downloadedBytes - lastSpeedBytes;
+        var finalBytesPerSecond = ProgressMath.CalculateBytesPerSecond(finalBytesDelta, speedTimer.Elapsed);
+        PublishProgress(
+            request,
+            DownloadStatus.Downloading,
+            downloadedBytes,
+            totalBytes,
+            ProgressMath.CalculatePercent(downloadedBytes, totalBytes),
+            finalBytesPerSecond,
+            null,
+            ProgressMath.CalculateEta(downloadedBytes, totalBytes, finalBytesPerSecond));
+
+        return downloadedBytes;
+    }
+
+    private async Task<int> ReadWithInactivityTimeoutAsync(Stream source, Memory<byte> buffer, CancellationToken ct)
+    {
+        using var readCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        readCts.CancelAfter(_readInactivityTimeout);
+
+        try
+        {
+            return await source.ReadAsync(buffer, readCts.Token);
+        }
+        catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+        {
+            throw new TimeoutException($"No download data received for {_readInactivityTimeout.TotalSeconds:F0} seconds.");
+        }
+    }
+
+    private static bool IsRetryable(Exception exception, CancellationToken ct)
+    {
+        if (exception is OperationCanceledException)
+        {
+            return !ct.IsCancellationRequested;
+        }
+
+        return exception is TimeoutException
+            || exception is IOException
+            || exception is HttpRequestException;
+    }
+
     private void PublishProgress(
-        string downloadId,
+        DownloadRequest request,
         DownloadStatus status,
         long downloaded,
         long? total,
@@ -190,7 +372,9 @@ public sealed class DownloadService : IDownloadService
         TimeSpan? eta = null)
     {
         _progressSubject.OnNext(new DownloadProgress(
-            DownloadId: downloadId,
+            DownloadId: request.DownloadId,
+            RepoId: request.RepoId,
+            FileName: request.FileName,
             Status: status,
             BytesDownloaded: downloaded,
             TotalBytes: total,
@@ -199,6 +383,12 @@ public sealed class DownloadService : IDownloadService
             Eta: eta,
             Message: message,
             Timestamp: DateTimeOffset.UtcNow));
+    }
+
+    private static async Task<long?> TryReadTotalBytesAsync(string metaPath, CancellationToken ct)
+    {
+        var metadata = await ReadLocalMetadataAsync(metaPath, ct);
+        return metadata?.TotalBytes;
     }
 
     private async Task<RemoteMetadata> GetRemoteMetadataAsync(DownloadRequest request, CancellationToken ct)
@@ -253,6 +443,11 @@ public sealed class DownloadService : IDownloadService
         {
             File.Delete(path);
         }
+    }
+
+    private static long GetFileLength(string path)
+    {
+        return File.Exists(path) ? new FileInfo(path).Length : 0;
     }
 
     private static void ApplyBearerToken(HttpRequestMessage request, string? token)

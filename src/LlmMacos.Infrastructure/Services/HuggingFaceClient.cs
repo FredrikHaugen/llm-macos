@@ -32,7 +32,11 @@ public sealed class HuggingFaceClient : IHuggingFaceClient
         foreach (var element in document.RootElement.EnumerateArray())
         {
             var files = ParseFiles(element);
-            if (!files.Any(f => f.IsGguf))
+            var pipelineTag = element.GetPropertyOrDefault("pipeline_tag");
+            var tags = element.GetStringArrayOrEmpty("tags");
+            var isLlm = IsStrictLlmModel(query.PipelineTag, pipelineTag);
+
+            if (!files.Any(f => f.IsGguf) || !isLlm)
             {
                 continue;
             }
@@ -41,6 +45,9 @@ public sealed class HuggingFaceClient : IHuggingFaceClient
                 RepoId: element.GetPropertyOrDefault("id") ?? string.Empty,
                 Author: element.GetPropertyOrDefault("author"),
                 Description: element.GetPropertyOrDefault("pipeline_tag"),
+                PipelineTag: pipelineTag,
+                Tags: tags,
+                IsLlm: isLlm,
                 Downloads: element.GetInt64OrDefault("downloads"),
                 Likes: element.GetInt32OrDefault("likes"),
                 LastModified: element.GetDateTimeOffsetOrNull("lastModified"),
@@ -116,6 +123,7 @@ public sealed class HuggingFaceClient : IHuggingFaceClient
         }
 
         parts.Add("filter=gguf");
+        parts.Add($"pipeline_tag={Uri.EscapeDataString(query.PipelineTag)}");
 
         if (!string.IsNullOrWhiteSpace(query.Author))
         {
@@ -131,6 +139,16 @@ public sealed class HuggingFaceClient : IHuggingFaceClient
         }
 
         return "?" + string.Join("&", parts);
+    }
+
+    private static bool IsStrictLlmModel(string expectedPipelineTag, string? actualPipelineTag)
+    {
+        if (string.IsNullOrWhiteSpace(actualPipelineTag))
+        {
+            return false;
+        }
+
+        return actualPipelineTag.Equals(expectedPipelineTag, StringComparison.OrdinalIgnoreCase);
     }
 
     private static IReadOnlyList<ModelFile> ParseFiles(JsonElement element)
@@ -235,5 +253,28 @@ internal static class JsonElementExtensions
         }
 
         return null;
+    }
+
+    public static IReadOnlyList<string> GetStringArrayOrEmpty(this JsonElement element, string name)
+    {
+        if (!element.TryGetProperty(name, out var value) || value.ValueKind != JsonValueKind.Array)
+        {
+            return Array.Empty<string>();
+        }
+
+        var list = new List<string>();
+        foreach (var item in value.EnumerateArray())
+        {
+            if (item.ValueKind == JsonValueKind.String)
+            {
+                var text = item.GetString();
+                if (!string.IsNullOrWhiteSpace(text))
+                {
+                    list.Add(text);
+                }
+            }
+        }
+
+        return list;
     }
 }
